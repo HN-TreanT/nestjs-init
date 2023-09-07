@@ -21,4 +21,8 @@ export class User {
 
 	@Column({ default: ROLES.USER })
 	role: ROLES;
+	@Column()
+	refreshToken: string;
+	@Column({ nullable: true, default: null })
+	avartar: string;
 }

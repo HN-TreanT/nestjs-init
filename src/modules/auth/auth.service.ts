@@ -8,6 +8,7 @@ import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
 import RegisterInfo from "./dto/regiter-info.dto";
 import * as bcrypt from "bcrypt";
+import { jwtContants } from "src/constants/jwtConstant";
 
 const saltOrRounds = 10;
 @Injectable()
@@ -32,8 +33,12 @@ export class AuthService {
 			name: user.name,
 		};
 		const access_token = await this.jwtService.signAsync(payload);
-
-		return { ...user, access_token };
+		const refresh_token = await this.jwtService.signAsync(payload, {
+			secret: jwtContants.refreshToken_secret,
+			expiresIn: "300d",
+		});
+		await this._userService.update(user.id, { refreshToken: refresh_token });
+		return { ...user, access_token, refresh_token };
 	}
 	async regiter(registerInfo: RegisterInfo) {
 		const user = await this._userService.findByEmail(registerInfo.email);
@@ -45,5 +50,23 @@ export class AuthService {
 		registerInfo.password = hashPassword;
 		const saveUser = await this._userService.create(registerInfo);
 		return saveUser;
+	}
+	async refresh(refresh_token: string) {
+		try {
+			const { email } = await this.jwtService.verifyAsync(refresh_token, {
+				secret: jwtContants.refreshToken_secret,
+			});
+
+			const user = await this._userService.findByEmail(email);
+			const payload = {
+				email: user.email,
+				role: user.role,
+				name: user.name,
+			};
+			const access_token = await this.jwtService.signAsync(payload);
+			return { ...payload, access_token };
+		} catch (e) {
+			throw new UnauthorizedException("Invalid token");
+		}
 	}
 }

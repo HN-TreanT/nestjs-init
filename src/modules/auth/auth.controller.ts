@@ -26,4 +26,8 @@ export class AuthController {
 	register(@Body() registerInfo: RegisterInfo) {
 		return this._authService.regiter(registerInfo);
 	}
+	@Post("refresh")
+	refresh(@Body() req: any) {
+		return this._authService.refresh(req.refresh_token);
+	}
 }
