@@ -3,6 +3,7 @@ import {
 	Body,
 	ClassSerializerInterceptor,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	ParseIntPipe,
@@ -34,24 +35,26 @@ import { FileInterceptor } from "@nestjs/platform-express";
 export class UserController {
 	constructor(private readonly userServices: UserService) {}
 	@Get()
-	@Roles(ROLES.ADMIN, ROLES.USER)
-	@UseGuards(AuthGuard, RolesGuard)
-	async getAll(@Query() paging: Paging): Promise<PagedData<User>> {
+	// @Roles(ROLES.ADMIN, ROLES.USER)
+	// @UseGuards(AuthGuard, RolesGuard)
+	async getAll(
+		@Query("paging") paging: Paging,
+		@Query("search") search: string,
+	): Promise<PagedData<User>> {
 		try {
-			// console.log("second");
-			return this.userServices.findAll(paging);
+			return this.userServices.findAll(search, paging);
 		} catch (err) {
 			throw new BadRequestException("Server error");
 		}
 	}
 
 	@Post()
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	create(@Body() req: UserCreate) {
 		return this.userServices.create(req);
 	}
 	@Put("/:id")
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	async update(@Param("id", ParseIntPipe) id: number, @Body() req: UserUpdate) {
 		return this.userServices.update(id, req);
 	}
@@ -62,7 +65,15 @@ export class UserController {
 		@Req() req: any,
 		@UploadedFile() file: Express.Multer.File,
 	) {
+		console.log(req.body);
 		console.log("upload file");
 		console.log(file);
+	}
+
+	@Delete("/:id")
+	// @UseGuards(AuthGuard)
+	async deleteById(@Param("id", ParseIntPipe) id: number) {
+		await this.userServices.delete(id);
+		return true;
 	}
 }

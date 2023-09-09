@@ -8,11 +8,13 @@ import { AuthService } from "../auth/auth.service";
 import { Repository } from "typeorm";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "src/guards/auth.guard";
+import { UserRepository } from "./user.repository";
+import { Post } from "../post/post.entity";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User])],
+	imports: [TypeOrmModule.forFeature([User, Post])],
 	controllers: [UserController],
-	providers: [UserService, AuthService],
+	providers: [UserService, AuthService, UserRepository],
 	exports: [UserService],
 })
 export class UserModule implements NestModule {
