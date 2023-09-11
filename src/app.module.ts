@@ -11,6 +11,8 @@ import { APP_FILTER } from "@nestjs/core";
 import { LoggerModule } from "./logger/logger.module";
 import { AllExceptionFilter } from "./filter/exception.filter";
 import { PostModule } from "./modules/post/post.module";
+import { CatModule } from "./modules/cat/cat.module";
+import { MailModule } from "./modules/mail/mail.module";
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -34,6 +36,7 @@ import { PostModule } from "./modules/post/post.module";
 		AuthModule,
 		LoggerModule,
 		PostModule,
+		CatModule,
 	],
 	controllers: [AppController],
 	providers: [

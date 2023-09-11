@@ -2,7 +2,6 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Exclude } from "class-transformer";
 import { ROLES } from "src/constants/role.enum";
 import { Post } from "../post/post.entity";
-import { Field } from "mysql2";
 @Entity()
 export class User {
 	@PrimaryGeneratedColumn()

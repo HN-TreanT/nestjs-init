@@ -5,6 +5,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Inject,
 	Param,
 	ParseIntPipe,
 	Post,
@@ -12,7 +13,6 @@ import {
 	Query,
 	Req,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors,
 } from "@nestjs/common";
 import { User } from "./user.entity";
@@ -23,17 +23,19 @@ import { PagedData } from "src/models/PagedData";
 import UserUpdate from "./dto/user-update";
 import UserCreate from "./dto/user-create";
 import { LoggingInterceptor } from "src/interceptors/logging.interceptor";
-import { AuthGuard } from "src/guards/auth.guard";
-import { Public } from "src/decorators/public.decorator";
-import { Roles } from "src/decorators/role.decorator";
-import { ROLES } from "src/constants/role.enum";
-import { RolesGuard } from "src/guards/role.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
+import UserReponse from "./dto/user-reponse";
+import { CACHE_MANAGER, CacheInterceptor } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import * as path from "path";
 @Controller("users")
 @UseInterceptors(ClassSerializerInterceptor)
 @UseInterceptors(LoggingInterceptor)
 export class UserController {
-	constructor(private readonly userServices: UserService) {}
+	constructor(
+		private readonly userServices: UserService,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+	) {}
 	@Get()
 	// @Roles(ROLES.ADMIN, ROLES.USER)
 	// @UseGuards(AuthGuard, RolesGuard)
@@ -48,6 +50,23 @@ export class UserController {
 		}
 	}
 
+	// @Get("/:id/get-cache")
+	// @UseInterceptors(CacheInterceptor)
+	// async getDetail(@Param("id") id: number): Promise<UserReponse> {
+	// 	console.log("run here");
+	// 	return this.userServices.getById(id);
+	// }
+	@Get("/cache/demo-set-cache")
+	async demoSetCache() {
+		await this.cacheManager.set("new", "heelo", 30000);
+		return true;
+	}
+
+	@Get("/cache/demo-get-cache")
+	async demoGetCache() {
+		const data = await this.cacheManager.get("new");
+		return data;
+	}
 	@Post()
 	// @UseGuards(AuthGuard)
 	create(@Body() req: UserCreate) {

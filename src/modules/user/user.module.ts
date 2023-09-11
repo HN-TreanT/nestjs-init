@@ -10,11 +10,17 @@ import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "src/guards/auth.guard";
 import { UserRepository } from "./user.repository";
 import { Post } from "../post/post.entity";
+import { CacheModule } from "@nestjs/cache-manager";
+import { MailModule } from "../mail/mail.module";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User, Post])],
+	imports: [
+		TypeOrmModule.forFeature([User, Post]),
+		CacheModule.register({}),
+		MailModule,
+	],
 	controllers: [UserController],
-	providers: [UserService, AuthService, UserRepository],
+	providers: [UserService, UserRepository],
 	exports: [UserService],
 })
 export class UserModule implements NestModule {

@@ -25,6 +25,9 @@ export class UserService {
 
 		return new PagedData<User>(paging.pageNumber, total, results);
 	}
+	async getById(id: any): Promise<User> {
+		return this._userRepository.findById(id);
+	}
 	async findByEmail(email: string): Promise<User> {
 		const user = await this._userRepository.findByEmail(email);
 		return user;
