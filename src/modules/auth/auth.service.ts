@@ -44,6 +44,8 @@ export class AuthService {
 	}
 	async regiter(registerInfo: RegisterInfo) {
 		const user = await this._userService.findByEmail(registerInfo.email);
+		//send email confirm
+		await this._mailService.sendUserConfirmation(registerInfo, "fy8efe");
 		if (user) {
 			throw new BadRequestException("account does exist");
 		}
@@ -53,8 +55,7 @@ export class AuthService {
 
 		const saveUser = await this._userService.create(registerInfo);
 
-		//send email confirm
-		await this._mailService.sendUserConfirmation(registerInfo, "fy8efe");
+		
 
 		return saveUser;
 	}
