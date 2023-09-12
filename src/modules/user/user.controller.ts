@@ -25,7 +25,12 @@ import UserCreate from "./dto/user-create";
 import { LoggingInterceptor } from "src/interceptors/logging.interceptor";
 import { FileInterceptor } from "@nestjs/platform-express";
 import UserReponse from "./dto/user-reponse";
-import { CACHE_MANAGER, CacheInterceptor } from "@nestjs/cache-manager";
+import {
+	CACHE_MANAGER,
+	CacheInterceptor,
+	CacheKey,
+	CacheTTL,
+} from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 import * as path from "path";
 @Controller("users")
@@ -39,9 +44,13 @@ export class UserController {
 	@Get()
 	// @Roles(ROLES.ADMIN, ROLES.USER)
 	// @UseGuards(AuthGuard, RolesGuard)
+	@UseInterceptors(CacheInterceptor)
+	@CacheKey("users")
+	@CacheTTL(3000)
 	async getAll(
-		@Query("paging") paging: Paging,
+		@Query() paging: Paging,
 		@Query("search") search: string,
+		// @Query("search") search: string,
 	): Promise<PagedData<User>> {
 		try {
 			return this.userServices.findAll(search, paging);
@@ -50,12 +59,13 @@ export class UserController {
 		}
 	}
 
-	// @Get("/:id/get-cache")
-	// @UseInterceptors(CacheInterceptor)
-	// async getDetail(@Param("id") id: number): Promise<UserReponse> {
-	// 	console.log("run here");
-	// 	return this.userServices.getById(id);
-	// }
+	@Get("/:id")
+	@UseInterceptors(CacheInterceptor)
+	@CacheKey("user")
+	@CacheTTL(3000)
+	async getDetail(@Param("id") id: number): Promise<UserReponse> {
+		return this.userServices.getById(id);
+	}
 	@Get("/cache/demo-set-cache")
 	async demoSetCache() {
 		await this.cacheManager.set("new", "heelo", 30000);

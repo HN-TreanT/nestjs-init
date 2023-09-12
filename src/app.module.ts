@@ -7,12 +7,13 @@ import { User } from "./modules/user/user.entity";
 import { Post } from "./modules/post/post.entity";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthModule } from "./modules/auth/auth.module";
-import { APP_FILTER } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggerModule } from "./logger/logger.module";
 import { AllExceptionFilter } from "./filter/exception.filter";
 import { PostModule } from "./modules/post/post.module";
 import { CatModule } from "./modules/cat/cat.module";
 import { MailModule } from "./modules/mail/mail.module";
+import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 @Module({
 	imports: [
 		ConfigModule.forRoot({

@@ -14,6 +14,7 @@ export class WebRepository<T extends Document> {
 			skip: (paging.pageNumber - 1) * paging.pageSize,
 			take: paging.pageSize,
 		});
+		//console.log(data);
 		return data;
 	}
 	async create(req: any) {
