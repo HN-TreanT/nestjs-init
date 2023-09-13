@@ -10,6 +10,7 @@ import { CacheModule, CacheStore } from "@nestjs/cache-manager";
 import { MailModule } from "../mail/mail.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import * as redisStore from "cache-manager-redis-store";
+import {HttpModule} from "@nestjs/axios"
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([User, Post]),
@@ -17,13 +18,18 @@ import * as redisStore from "cache-manager-redis-store";
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: async (configService: ConfigService) => ({
+			    ttl:5,
 				store: redisStore,
-				host: configService.get<string>("REDIS_HOST"),
-				port: configService.get<number>("REDIS_PORT"),
-				username: configService.get<string>("REDIS_USERNAME"),
-				password: configService.get<string>("REDIS_PASSWORD"),
+				// host: configService.get<string>("REDIS_HOST"),
+				// port: configService.get<number>("REDIS_PORT"),
+				// username: configService.get<string>("REDIS_USERNAME"),
+				// password: configService.get<string>("REDIS_PASSWORD"),
+				host:'localhost',
+				port:6379
 			}),
 		}),
+		// CacheModule.register({}),
+		HttpModule.register({}),
 		MailModule,
 	],
 	controllers: [UserController],

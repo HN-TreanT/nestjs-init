@@ -32,7 +32,7 @@ import {
 	CacheTTL,
 } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
-import * as path from "path";
+import { HttpService } from "@nestjs/axios"
 @Controller("users")
 @UseInterceptors(ClassSerializerInterceptor)
 @UseInterceptors(LoggingInterceptor)
@@ -40,6 +40,9 @@ export class UserController {
 	constructor(
 		private readonly userServices: UserService,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+		private readonly httpService:HttpService
+		
+		
 	) {}
 	@Get()
 	// @Roles(ROLES.ADMIN, ROLES.USER)
@@ -62,20 +65,25 @@ export class UserController {
 	@Get("/:id")
 	@UseInterceptors(CacheInterceptor)
 	@CacheKey("user")
-	@CacheTTL(3000)
+	@CacheTTL(10)
 	async getDetail(@Param("id") id: number): Promise<UserReponse> {
 		return this.userServices.getById(id);
 	}
-	@Get("/cache/demo-set-cache")
-	async demoSetCache() {
-		await this.cacheManager.set("new", "heelo", 30000);
-		return true;
+	@Get("/cache/demo-set-cache/:id")
+	//  @UseInterceptors(CacheInterceptor)
+	// // @CacheTTL(10)
+	// @CacheKey("test") 
+	async demoSetCache(@Param('id') id: any) {
+		const data =await this.httpService.axiosRef.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+	    await this.cacheManager.set('test',data.data,600)
+		return data.data;
 	}
 
 	@Get("/cache/demo-get-cache")
+	// @UseInterceptors(CacheInterceptor)
 	async demoGetCache() {
-		const data = await this.cacheManager.get("new");
-		return data;
+		const data = await this.cacheManager.get("test")
+		return data; 
 	}
 	@Post()
 	// @UseGuards(AuthGuard)

@@ -11,6 +11,8 @@ import UserReponse from "./dto/user-reponse";
 import { CACHE_MANAGER, CacheInterceptor } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
 
+import { HttpService } from '@nestjs/axios'
+
 @Injectable()
 export class UserService {
 	constructor(
@@ -59,4 +61,6 @@ export class UserService {
 	async delete(id: number) {
 		return this._userRepository.deleteById(id);
 	}
+
+	
 }

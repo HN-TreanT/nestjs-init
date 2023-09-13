@@ -4,6 +4,8 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import * as path from "path";
+import { BullModule } from "@nestjs/bull";
+import { EmailConsumer } from "./consumer/email.consumer";
 @Module({
 	imports: [
 		ConfigModule,
@@ -31,8 +33,11 @@ import * as path from "path";
 			}),
 			inject: [ConfigService],
 		}),
+		BullModule.registerQueue({
+			name:"send-mail"
+		})
 	],
-	providers: [MailService],
+	providers: [MailService,EmailConsumer],
 	exports: [MailService],
 })
 export class MailModule {}

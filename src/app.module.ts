@@ -14,6 +14,8 @@ import { PostModule } from "./modules/post/post.module";
 import { CatModule } from "./modules/cat/cat.module";
 import { MailModule } from "./modules/mail/mail.module";
 import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
+import * as redisStore from "cache-manager-redis-store";
+import { BullModule } from "@nestjs/bull";
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -33,6 +35,18 @@ import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 			}),
 			inject: [ConfigService],
 		}),
+		// CacheModule.register({
+		// 	store:redisStore,
+		// 	host:"localhost",
+		// 	port:6379
+			
+		// }),
+		BullModule.forRoot({
+			redis:{
+				host:'localhost',
+				port:6379
+			}
+		}),
 		UserModule,
 		AuthModule,
 		LoggerModule,
@@ -45,7 +59,8 @@ import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 		{
 			provide: APP_FILTER,
 			useClass: AllExceptionFilter,
-		},
+		}
+
 	],
 })
 export class AppModule {}
