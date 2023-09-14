@@ -13,15 +13,6 @@ export class MailService {
 	async sendUserConfirmation(user: RegisterInfo, token: string) {
 		const url = "https://notiz.dev/blog/send-emails-with-nestjs";
 		await this.sendMail.add('register',{name:user.name,url:url, token:token,email: user.email },{removeOnComplete: true}) 
-		// await this.mailerService.sendMail({
-		// 	to: "hntreant23@gmail.com",
-		// 	subject: "Welcome to Nice App! Confirm your Email",
-		// 	template: "./welcome",
-		// 	context: {
-		// 		name: user.name,
-		// 		url,
-		// 		token,
-		// 	},
-		// });
+	
 	}
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hello socket</h1>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:8080',{
+            extraHeaders: {
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imh0bnRyZWFuQGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwibmFtZSI6Ik5hbSIsImlhdCI6MTY5NDY1NzA3NywiZXhwIjoxNjk0NjU3MTM3fQ.kJiegFJqBdcxzKbn7AnHJerPWCUNi7TJ-FjMUpSYhJo'
+            }
+        })
+        socket.on('connect',function (){
+            console.log('connected')
+            socket.emit('message','Hoang Nam')
+        })
+        socket.on('disconnect',function ()  {
+            console.log('disconnected')
+        })
+        socket.on('message',function( message){
+            console.log("message", message)
+        })
+    </script>
+</body>
+</html>

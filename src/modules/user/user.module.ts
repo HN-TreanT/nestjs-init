@@ -18,7 +18,7 @@ import {HttpModule} from "@nestjs/axios"
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: async (configService: ConfigService) => ({
-			    ttl:5,
+			    // ttl:5,
 				store: redisStore,
 				// host: configService.get<string>("REDIS_HOST"),
 				// port: configService.get<number>("REDIS_PORT"),

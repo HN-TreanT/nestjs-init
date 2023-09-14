@@ -9,7 +9,6 @@ export class EmailConsumer {
     ){}
     @Process('register')
     async registerEmail (job : Job<unknown>){
-		console.log(job.data)
 		await this.mailerService.sendMail({
 			to:job.data["email"],
 			subject: "Welcome to Nice App! Confirm your Email",
