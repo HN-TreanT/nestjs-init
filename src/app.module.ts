@@ -12,11 +12,11 @@ import { LoggerModule } from "./logger/logger.module";
 import { AllExceptionFilter } from "./filter/exception.filter";
 import { PostModule } from "./modules/post/post.module";
 import { CatModule } from "./modules/cat/cat.module";
-import { MailModule } from "./modules/mail/mail.module";
-import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
+import { CACHE_MANAGER, CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-redis-store";
 import { BullModule } from "@nestjs/bull";
 import { EventGateway } from "./event.gateway";
+import { Cache } from "cache-manager";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,12 +36,17 @@ import { EventGateway } from "./event.gateway";
       }),
       inject: [ConfigService],
     }),
-    // CacheModule.register({
-    // 	store:redisStore,
-    // 	host:"localhost",
-    // 	port:6379
-
-    // }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        ttl: 100,
+        store: redisStore,
+        host: "localhost",
+        port: 6379,
+      }),
+    }),
     BullModule.forRoot({
       redis: {
         host: "localhost",
